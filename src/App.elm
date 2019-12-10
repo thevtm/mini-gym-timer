@@ -2,8 +2,10 @@ module App exposing (main)
 
 import Browser
 import Html exposing (Html, button, div, text)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (class, disabled)
 import Html.Events exposing (onClick)
+import Json.Encode as Encode
+import Sounds exposing (playBaap, playBeep, playButton, playCountdown)
 import Time
 
 
@@ -95,7 +97,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Start ->
-            ( { model | state = Prepare 0 }, Cmd.none )
+            ( { model | state = Prepare 0 }, playButton )
 
         Tick _ ->
             case model.state of
@@ -104,13 +106,14 @@ update msg model =
                         ( { model | state = Exercise 0 }, Cmd.none )
 
                     else
-                        ( { model | state = Prepare (seconds + 1) }, Cmd.none )
-
-                Exercise 10 ->
-                    ( { model | state = Finished }, Cmd.none )
+                        ( { model | state = Prepare (seconds + 1) }, playCountdown (model.prepareTimer - seconds) )
 
                 Exercise seconds ->
-                    ( { model | state = Exercise (seconds + 1) }, Cmd.none )
+                    if seconds >= model.exerciseTimer then
+                        ( { model | state = Finished }, Cmd.none )
+
+                    else
+                        ( { model | state = Exercise (seconds + 1) }, playCountdown (model.exerciseTimer - seconds) )
 
                 _ ->
                     ( model, Cmd.none )
@@ -127,6 +130,6 @@ view : Model -> Html Msg
 view model =
     div [ class "m-8" ]
         [ div [ class "m-2" ] [ text ("Status: " ++ toString model) ]
-        , button [ class "p-2 mr-2 bg-gray-200", onClick Start ] [ text "Start" ]
-        , button [ class "p-2 bg-gray-200", onClick Finish ] [ text "Stop" ]
+        , button [ class "p-2 mr-2 bg-gray-200", onClick Start, disabled (xor (model.state /= Idle) (model.state /= Finished)) ] [ text "Start" ]
+        , button [ class "p-2 bg-gray-200", onClick Finish, disabled (model.state == Idle) ] [ text "Stop" ]
         ]

@@ -9884,6 +9884,26 @@ var $author$project$App$Finished = {$: 'Finished'};
 var $author$project$App$Prepare = function (a) {
 	return {$: 'Prepare', a: a};
 };
+var $author$project$Sounds$sounds = _Platform_outgoingPort('sounds', $elm$core$Basics$identity);
+var $author$project$Sounds$play = function (soundName) {
+	return $author$project$Sounds$sounds(
+		$elm$json$Json$Encode$string(soundName));
+};
+var $author$project$Sounds$playButton = $author$project$Sounds$play('button');
+var $author$project$Sounds$playBaap = $author$project$Sounds$play('baap');
+var $author$project$Sounds$playBeep = $author$project$Sounds$play('beep');
+var $author$project$Sounds$playCountdown = function (seconds) {
+	switch (seconds) {
+		case 3:
+			return $author$project$Sounds$playBeep;
+		case 2:
+			return $author$project$Sounds$playBeep;
+		case 1:
+			return $author$project$Sounds$playBaap;
+		default:
+			return $elm$core$Platform$Cmd$none;
+	}
+};
 var $author$project$App$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -9894,7 +9914,7 @@ var $author$project$App$update = F2(
 						{
 							state: $author$project$App$Prepare(0)
 						}),
-					$elm$core$Platform$Cmd$none);
+					$author$project$Sounds$playButton);
 			case 'Tick':
 				var _v1 = model.state;
 				switch (_v1.$) {
@@ -9912,24 +9932,20 @@ var $author$project$App$update = F2(
 								{
 									state: $author$project$App$Prepare(seconds + 1)
 								}),
-							$elm$core$Platform$Cmd$none);
+							$author$project$Sounds$playCountdown(model.prepareTimer - seconds));
 					case 'Exercise':
-						if (_v1.a === 10) {
-							return _Utils_Tuple2(
-								_Utils_update(
-									model,
-									{state: $author$project$App$Finished}),
-								$elm$core$Platform$Cmd$none);
-						} else {
-							var seconds = _v1.a;
-							return _Utils_Tuple2(
-								_Utils_update(
-									model,
-									{
-										state: $author$project$App$Exercise(seconds + 1)
-									}),
-								$elm$core$Platform$Cmd$none);
-						}
+						var seconds = _v1.a;
+						return (_Utils_cmp(seconds, model.exerciseTimer) > -1) ? _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{state: $author$project$App$Finished}),
+							$elm$core$Platform$Cmd$none) : _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									state: $author$project$App$Exercise(seconds + 1)
+								}),
+							$author$project$Sounds$playCountdown(model.exerciseTimer - seconds));
 					default:
 						return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
@@ -9943,6 +9959,15 @@ var $author$project$App$update = F2(
 	});
 var $author$project$App$Finish = {$: 'Finish'};
 var $author$project$App$Start = {$: 'Start'};
+var $elm$json$Json$Encode$bool = _Json_wrap;
+var $elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$bool(bool));
+	});
+var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
 var $author$project$App$toString = function (model) {
 	var _v0 = model.state;
 	switch (_v0.$) {
@@ -9958,6 +9983,7 @@ var $author$project$App$toString = function (model) {
 			return 'finished';
 	}
 };
+var $elm$core$Basics$xor = _Basics_xor;
 var $author$project$App$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -9983,7 +10009,9 @@ var $author$project$App$view = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$Attributes$class('p-2 mr-2 bg-gray-200'),
-						$elm$html$Html$Events$onClick($author$project$App$Start)
+						$elm$html$Html$Events$onClick($author$project$App$Start),
+						$elm$html$Html$Attributes$disabled(
+						(!_Utils_eq(model.state, $author$project$App$Idle)) !== (!_Utils_eq(model.state, $author$project$App$Finished)))
 					]),
 				_List_fromArray(
 					[
@@ -9994,7 +10022,9 @@ var $author$project$App$view = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$Attributes$class('p-2 bg-gray-200'),
-						$elm$html$Html$Events$onClick($author$project$App$Finish)
+						$elm$html$Html$Events$onClick($author$project$App$Finish),
+						$elm$html$Html$Attributes$disabled(
+						_Utils_eq(model.state, $author$project$App$Idle))
 					]),
 				_List_fromArray(
 					[

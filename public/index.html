@@ -2,22 +2,46 @@
 <html>
 
 <head>
-    <title>Open Timer</title>
+  <title>40 seconds timer</title>
 
-    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
 </head>
 
 <body>
-    <div id="elm-app-is-loaded-here"></div>
+  <div id="elm-app-is-loaded-here"></div>
 
-    <script src="elm.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.1.2/howler.js"
+    integrity="sha256-K6gwVUMyEPd4s9vtZXdCIPySi3r1WhzqpUAw4DR0G9I=" crossorigin="anonymous"></script>
 
-    <script>
-        var app = Elm.App.init({
-            node: document.getElementById("elm-app-is-loaded-here")
-        });
-    </script>
+  <script src="elm.js"></script>
 
+  <script>
+    var app = Elm.App.init({
+      node: document.getElementById("elm-app-is-loaded-here")
+    });
+
+    var sounds = {
+      baap: new Howl({
+        src: ["sounds/Click-sound-effect.mp3"]
+      }),
+      beep: new Howl({
+        src: ["sounds/Blooper-sound-effect.mp3"]
+      }),
+      button: new Howl({
+        src: ["sounds/Bleep-sound.mp3"]
+      })
+    };
+
+    app.ports.sounds.subscribe(function (soundName) {
+      const sound = sounds[soundName];
+
+      if (sound == null) {
+        console.warn("Unknown sound name: " + soundName + "!");
+      }
+
+      sound.play();
+    });
+  </script>
 </body>
 
 </html>
