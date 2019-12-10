@@ -69,7 +69,7 @@ toString model =
             "starting in " ++ String.fromInt (model.prepareTimer - seconds) ++ " seconds"
 
         Exercise seconds ->
-            "running for " ++ String.fromInt seconds ++ " seconds"
+            "running for " ++ String.fromInt (model.exerciseTimer - seconds) ++ " seconds"
 
         Finished ->
             "finished"
@@ -115,6 +115,7 @@ subscriptions model =
 
 type Msg
     = Start
+    | Stop
     | Finish
     | Tick Time.Posix
 
@@ -124,6 +125,9 @@ update msg model =
     case msg of
         Start ->
             ( { model | state = Prepare 0 }, playButton )
+
+        Stop ->
+            ( { model | state = Finished }, playButton )
 
         Tick _ ->
             case model.state of
@@ -157,5 +161,5 @@ view model =
     div [ class "m-8" ]
         [ div [ class "m-2" ] [ text ("Status: " ++ toString model) ]
         , button [ class "p-2 mr-2 bg-gray-200", onClick Start, disabled (not (canStart model.state)) ] [ text "Start" ]
-        , button [ class "p-2 bg-gray-200", onClick Finish, disabled (not (canStop model.state)) ] [ text "Stop" ]
+        , button [ class "p-2 bg-gray-200", onClick Stop, disabled (not (canStop model.state)) ] [ text "Stop" ]
         ]
