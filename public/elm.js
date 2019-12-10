@@ -9959,6 +9959,26 @@ var $author$project$App$update = F2(
 	});
 var $author$project$App$Finish = {$: 'Finish'};
 var $author$project$App$Start = {$: 'Start'};
+var $author$project$App$canStart = function (state) {
+	switch (state.$) {
+		case 'Idle':
+			return true;
+		case 'Finished':
+			return true;
+		default:
+			return false;
+	}
+};
+var $author$project$App$canStop = function (state) {
+	switch (state.$) {
+		case 'Prepare':
+			return true;
+		case 'Exercise':
+			return true;
+		default:
+			return false;
+	}
+};
 var $elm$json$Json$Encode$bool = _Json_wrap;
 var $elm$html$Html$Attributes$boolProperty = F2(
 	function (key, bool) {
@@ -9983,7 +10003,6 @@ var $author$project$App$toString = function (model) {
 			return 'finished';
 	}
 };
-var $elm$core$Basics$xor = _Basics_xor;
 var $author$project$App$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -10011,7 +10030,7 @@ var $author$project$App$view = function (model) {
 						$elm$html$Html$Attributes$class('p-2 mr-2 bg-gray-200'),
 						$elm$html$Html$Events$onClick($author$project$App$Start),
 						$elm$html$Html$Attributes$disabled(
-						(!_Utils_eq(model.state, $author$project$App$Idle)) !== (!_Utils_eq(model.state, $author$project$App$Finished)))
+						!$author$project$App$canStart(model.state))
 					]),
 				_List_fromArray(
 					[
@@ -10024,7 +10043,7 @@ var $author$project$App$view = function (model) {
 						$elm$html$Html$Attributes$class('p-2 bg-gray-200'),
 						$elm$html$Html$Events$onClick($author$project$App$Finish),
 						$elm$html$Html$Attributes$disabled(
-						_Utils_eq(model.state, $author$project$App$Idle))
+						!$author$project$App$canStop(model.state))
 					]),
 				_List_fromArray(
 					[

@@ -33,6 +33,32 @@ type State
     | Finished
 
 
+canStart : State -> Bool
+canStart state =
+    case state of
+        Idle ->
+            True
+
+        Finished ->
+            True
+
+        _ ->
+            False
+
+
+canStop : State -> Bool
+canStop state =
+    case state of
+        Prepare _ ->
+            True
+
+        Exercise _ ->
+            True
+
+        _ ->
+            False
+
+
 toString : Model -> String
 toString model =
     case model.state of
@@ -130,6 +156,6 @@ view : Model -> Html Msg
 view model =
     div [ class "m-8" ]
         [ div [ class "m-2" ] [ text ("Status: " ++ toString model) ]
-        , button [ class "p-2 mr-2 bg-gray-200", onClick Start, disabled (xor (model.state /= Idle) (model.state /= Finished)) ] [ text "Start" ]
-        , button [ class "p-2 bg-gray-200", onClick Finish, disabled (model.state == Idle) ] [ text "Stop" ]
+        , button [ class "p-2 mr-2 bg-gray-200", onClick Start, disabled (not (canStart model.state)) ] [ text "Start" ]
+        , button [ class "p-2 bg-gray-200", onClick Finish, disabled (not (canStop model.state)) ] [ text "Stop" ]
         ]
