@@ -29,6 +29,9 @@ playButton =
 playCountdown : Int -> Cmd msg
 playCountdown seconds =
     case seconds of
+        4 ->
+            playBeep
+
         3 ->
             playBeep
 
