@@ -23,4 +23,4 @@ build-dev:
 
 # Deploy
 deploy: build
-	gh-pages --dir public --branch gh-pages
+	gh-pages --dist public
