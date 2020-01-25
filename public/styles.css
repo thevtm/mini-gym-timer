@@ -1,0 +1,54 @@
+body {
+  margin: 0;
+}
+
+.wrapper {
+  width: 100vw;
+  height: 100vh;
+
+  background: blue;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  position: relative;
+  outline: dashed white 1px;
+}
+
+@media (orientation:portrait) {
+  .container {
+    width: 50vw;
+    height: 50vw;
+  }
+}
+
+@media (orientation:landscape) {
+  .container {
+    width: 50vh;
+    height: 50vh;
+  }
+}
+
+.graphic {
+  position: absolute;
+
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.prepare-timer-circle {
+  fill: none;
+  stroke: yellow;
+  stroke-width: 2;
+}
+
+.exercise-timer-circle {
+  fill: none;
+  stroke: green;
+  stroke-width: 2;
+}

@@ -1,11 +1,20 @@
 module App exposing (main)
 
 import Browser
-import Html exposing (Html, button, div, text)
-import Html.Attributes exposing (class, disabled)
+import Html exposing (Html, div)
+import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
-import Json.Encode as Encode
-import Sounds exposing (playBaap, playBeep, playButton, playCountdown)
+import Sounds exposing (playButton, playCountdown)
+import Svg exposing (path, svg)
+import Svg.Attributes
+    exposing
+        ( d
+        , fill
+        , stroke
+        , strokeWidth
+        , viewBox
+        )
+import SvgPath exposing (makeCircle)
 import Time
 
 
@@ -33,21 +42,8 @@ type State
     | Finished
 
 
-canStart : State -> Bool
-canStart state =
-    case state of
-        Idle ->
-            True
-
-        Finished ->
-            True
-
-        _ ->
-            False
-
-
-canStop : State -> Bool
-canStop state =
+isRunning : State -> Bool
+isRunning state =
     case state of
         Prepare _ ->
             True
@@ -90,6 +86,27 @@ init _ =
       }
     , Cmd.none
     )
+
+
+totalRunningTime : Model -> Int
+totalRunningTime model =
+    model.prepareTimer + model.exerciseTimer
+
+
+runningTime : Model -> Int
+runningTime model =
+    case model.state of
+        Prepare seconds ->
+            seconds
+
+        Exercise seconds ->
+            model.prepareTimer + seconds
+
+        Finished ->
+            totalRunningTime model
+
+        _ ->
+            0
 
 
 
@@ -158,8 +175,81 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    div [ class "m-8" ]
-        [ div [ class "m-2" ] [ text ("Status: " ++ toString model) ]
-        , button [ class "p-2 mr-2 bg-gray-200", onClick Start, disabled (not (canStart model.state)) ] [ text "Start" ]
-        , button [ class "p-2 bg-gray-200", onClick Stop, disabled (not (canStop model.state)) ] [ text "Stop" ]
+    let
+        dimensions =
+            { width = 100, height = 100 }
+
+        center =
+            ( dimensions.width / 2, dimensions.height / 2 )
+
+        angleStep =
+            360 / toFloat (model.prepareTimer + model.exerciseTimer)
+
+        prepareSeconds =
+            case model.state of
+                Prepare seconds ->
+                    seconds
+
+                Exercise _ ->
+                    model.prepareTimer
+
+                Finished ->
+                    model.prepareTimer
+
+                _ ->
+                    0
+
+        exerciseSeconds =
+            case model.state of
+                Exercise seconds ->
+                    seconds
+
+                Finished ->
+                    model.exerciseTimer
+
+                _ ->
+                    0
+    in
+    div
+        [ class "wrapper" ]
+        [ div
+            [ class "container"
+            , onClick
+                (if isRunning model.state then
+                    Stop
+
+                 else
+                    Start
+                )
+            ]
+            [ svg
+                [ Svg.Attributes.class "graphic"
+                , viewBox "0 0 100 100"
+                ]
+                [ -- Total Time Circle
+                  path
+                    [ stroke "grey"
+                    , fill "none"
+                    , strokeWidth "3"
+                    , d (makeCircle center 40 0 360)
+                    ]
+                    []
+                , -- Prepare Time Circle
+                  path
+                    [ stroke "yellow"
+                    , fill "none"
+                    , strokeWidth "3"
+                    , d (makeCircle center 40 0 (toFloat prepareSeconds * angleStep))
+                    ]
+                    []
+                , -- Exercise Time Circle
+                  path
+                    [ stroke "green"
+                    , fill "none"
+                    , strokeWidth "3"
+                    , d (makeCircle center 40 (toFloat model.prepareTimer * angleStep) (toFloat exerciseSeconds * angleStep))
+                    ]
+                    []
+                ]
+            ]
         ]
