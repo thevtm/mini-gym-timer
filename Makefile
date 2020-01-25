@@ -7,6 +7,12 @@ OUTPUT_FILEPATH = public/elm.js
 dev:
 	elm-live $(ENTRY_FILEPATH) --dir $(ASSET_PATH) --start-page $(HTML_FILEPATH) -- --output $(OUTPUT_FILEPATH) --debug
 
+test:
+	elm-test
+
+test-watch:
+	elm-test --watch
+
 # Build production
 build:
 	elm make $(ENTRY_FILEPATH) --output $(OUTPUT_FILEPATH) --optimize
@@ -14,3 +20,7 @@ build:
 # Build development
 build-dev:
 	elm make $(ENTRY_FILEPATH) --output $(OUTPUT_FILEPATH) --debug
+
+# Deploy
+deploy: build
+	gh-pages --dir public --branch gh-pages
