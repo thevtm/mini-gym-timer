@@ -1,4 +1,4 @@
-# Open Timer
+# Mini Gym Timer
 
 This is a count down WebApp written in Elm.
 
