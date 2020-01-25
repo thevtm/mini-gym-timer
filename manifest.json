@@ -1,0 +1,17 @@
+{
+    "short_name": "40s Timer",
+    "name": "40 Seconds Timer",
+    "description": "A simple 40 seconds timer.",
+    "icons": [
+        {
+            "src": "./images/icons/around-the-clock-1731233-1476649.png",
+            "sizes": "256x256",
+            "type": "image/png"
+        }
+    ],
+    "start_url": "./",
+    "display": "standalone",
+    "orientation": "portrait",
+    "theme_color": "#29BDBB",
+    "background_color": "#29BDBB"
+}

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <meta name='mobile-web-app-capable' content='yes'>
+
+  <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
+
+  <link href="styles.css" rel="stylesheet" />
+  <link rel="manifest" href="./manifest.json">
+
+  <title>Mini Gym Timer</title>
+  <meta name='description' content='A small timer for gym enthusiasts.'>
+</head>
+
+<body>
+  <div id="elm-app-is-loaded-here"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.1.2/howler.js"
+    integrity="sha256-K6gwVUMyEPd4s9vtZXdCIPySi3r1WhzqpUAw4DR0G9I=" crossorigin="anonymous"></script>
+
+  <script>
+    // Register the service worker if available.
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./service-worker.js').then(function (reg) {
+        console.log('Successfully registered service worker', reg);
+      }).catch(function (err) {
+        console.warn('Error whilst registering service worker', err);
+      });
+    }
+  </script>
+
+  <script src="elm.js"></script>
+
+  <script>
+    var app = Elm.App.init({
+      node: document.getElementById("elm-app-is-loaded-here")
+    });
+
+    var sounds = {
+      baap: new Howl({
+        src: ["sounds/Click-sound-effect.mp3"]
+      }),
+      beep: new Howl({
+        src: ["sounds/Blooper-sound-effect.mp3"]
+      }),
+      button: new Howl({
+        src: ["sounds/Bleep-sound.mp3"]
+      })
+    };
+
+    app.ports.sounds.subscribe(function (soundName) {
+      const sound = sounds[soundName];
+
+      if (sound == null) {
+        console.warn("Unknown sound name: " + soundName + "!");
+      }
+
+      sound.play();
+    });
+  </script>
+</body>
+
+</html>
