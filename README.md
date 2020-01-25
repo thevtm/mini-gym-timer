@@ -1,6 +1,6 @@
 # Mini Gym Timer
 
-This is a count down WebApp written in Elm.
+This is a small timer for gym enthusiasts WebApp written in Elm.
 
 ## Install
 
