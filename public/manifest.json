@@ -1,7 +1,7 @@
 {
-    "short_name": "40s Timer",
-    "name": "40 Seconds Timer",
-    "description": "A simple 40 seconds timer.",
+    "short_name": "Mini Gym Timer",
+    "name": "Mini Gym Timer",
+    "description": "A small timer for gym enthusiasts.",
     "icons": [
         {
             "src": "./images/icons/around-the-clock-1731233-1476649.png",
